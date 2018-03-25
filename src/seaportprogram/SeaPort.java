@@ -21,4 +21,12 @@ class SeaPort extends Thing {
     public SeaPort (Scanner sc){
         super(sc);
     }
+    public void addShip(Ship ship) {
+        ships.add(ship);
+    }
+    public void addShipToQue(Ship ship) {
+        que.add(ship);
+    }
+
+   
 }

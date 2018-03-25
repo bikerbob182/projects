@@ -11,16 +11,8 @@ import java.util.Scanner;
  *
  * @author Hess
  */
-class Dock extends Thing {
-    Ship ship;
-
-    Dock(Scanner sc) {
+class CargoShip extends Ship{
+    public CargoShip(Scanner sc){
         super(sc);
-    }
-    public Ship getShip(){
-        return ship;
-    }
-    public void setShip(Ship ship){
-    
     }
 }
