@@ -14,14 +14,15 @@ import java.util.Scanner;
  * @author Hess
  */
 public class World extends Thing {
-    HashMap<Integer, SeaPort> ports = new HashMap();
+    HashMap<Integer, SeaPort> ports;
     HashMap<Integer, Dock> docks = new HashMap();
     HashMap<Integer, Ship> ships = new HashMap();
     PortTime time;
-    public World(Scanner sc) {
-        super(sc);
+    public World(){
+           ports = new HashMap<Integer, SeaPort>();
     }
-    void process (String st) {
+
+    public void process (String st) {
         // System.out.println ("Processing >" + st + "<");
         Scanner sc = new Scanner (st);
         if (!sc.hasNext())
@@ -94,5 +95,10 @@ public class World extends Thing {
         }
         ports.get(dock.getParent()).addShip(ship);
     }
-    
+    public String toString(){
+        String result = "The World: ";
+        for (SeaPort sp : ports.values())
+            result += sp.toString();
+        return result;
+    }
 }
