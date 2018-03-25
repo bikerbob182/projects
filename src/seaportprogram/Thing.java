@@ -24,7 +24,10 @@ public class Thing implements Comparable<Thing> {
     int index;
     int parent;
     String name;
-    
+    //no argument constructor
+    public Thing(){
+        //no code
+    }
     //constructor
     public Thing(Scanner sc){
         this.name = sc.next();

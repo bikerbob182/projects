@@ -10,6 +10,9 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
@@ -20,6 +23,7 @@ import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
@@ -34,10 +38,26 @@ public class SeaPortProgram extends JFrame{
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         new SeaPortProgram();
+        World world = new World();
+        Scanner scan;
+        String st = null;
+        try{
+            scan = new Scanner(new File(chooseFile()));
+            while(scan.hasNextLine()){
+                st = scan.nextLine();
+                world.process(st);
+            }
+            world.process(st);
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        
     }
-    public SeaPortProgram(){
+    public SeaPortProgram() throws FileNotFoundException{
+        
+        
         //build GUI
         setTitle("Class Dependecny Graph");
         setSize(650,400);
@@ -90,9 +110,10 @@ public class SeaPortProgram extends JFrame{
         JTextArea textArea = new JTextArea(11, 52);
         textArea.append(" ");
         textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane();
         TitledBorder titleBorder2 = new TitledBorder("Recompilation Order");
         textArea.setBorder(titleBorder2);
-        textAreaPanel.add(textArea);
+        textAreaPanel.add(scrollPane);
           
         //add panels to main panel
         window.add(inputPanel);
@@ -107,11 +128,21 @@ public class SeaPortProgram extends JFrame{
         selectFile.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JFileChooser fc = new JFileChooser(".");
-            int returnVal = fc.showOpenDialog(SeaPortProgram.this);
+            
         }
         });
     }
+    public static String chooseFile(){
+            String file = null;
+            JFileChooser fc = new JFileChooser(".");
+            fc.setDialogTitle("Please choose a file");
+            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            if(fc.showOpenDialog(null)== JFileChooser.APPROVE_OPTION){
+                file = fc.getSelectedFile().toString();
+            }
+                    
+            return file;
+        }
 }
 
 
