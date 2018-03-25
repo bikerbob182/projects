@@ -21,6 +21,17 @@ class Dock extends Thing {
         return ship;
     }
     public void setShip(Ship ship){
-    
+        synchronized (this){
+            this.ship = ship;
+            if (ship != null){
+                this.ship.thingObject = this;
+            }
+        }
+    }
+    public String toString(){
+        if(ship != null)
+            return "\n Dock: " + super.toString() + "\n " + ship.toString();
+        else
+            return "\n Dock: " + super.toString();
     }
 }

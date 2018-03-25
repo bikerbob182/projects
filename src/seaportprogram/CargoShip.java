@@ -12,7 +12,14 @@ import java.util.Scanner;
  * @author Hess
  */
 class CargoShip extends Ship{
+    double cargoValue, cargoVolume, cargoWeight;
     public CargoShip(Scanner sc){
         super(sc);
+        if(sc.hasNextDouble())
+            cargoValue = sc.nextDouble();
+        if(sc.hasNextDouble())
+            cargoVolume = sc.nextDouble();
+        if(sc.hasNextDouble())
+            cargoWeight = sc.nextDouble();
     }
 }

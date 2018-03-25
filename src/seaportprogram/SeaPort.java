@@ -27,6 +27,21 @@ class SeaPort extends Thing {
     public void addShipToQue(Ship ship) {
         que.add(ship);
     }
-
-   
+    public void addDock(Dock dock){
+        docks.add(dock);
+    }
+    public void addPerson(Person person){
+        persons.add(person);
+    }
+    public String toString () {
+        String st = "\n\nSeaPort: " + super.toString();
+        for (Dock md: docks) st += "\n" + md;
+            st += "\n\n --- List of all ships in que:";
+        for (Ship ms: que ) st += "\n > " + ms;
+            st += "\n\n --- List of all ships:";
+        for (Ship ms: ships) st += "\n > " + ms;
+            st += "\n\n --- List of all persons:";
+        for (Person mp: persons) st += "\n > " + mp;
+            return st;
+    } // end method toString
 }

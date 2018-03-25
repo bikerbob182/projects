@@ -5,10 +5,23 @@
  */
 package seaportprogram;
 
+import java.util.Scanner;
+
 /**
  *
  * @author Hess
  */
-class Person {
-    
+class Person extends Thing {
+    String skill;
+    public Person(Scanner sc) {
+        super(sc);
+        if (sc.hasNext())
+            skill = sc.next();
+    }
+    public String getSkill(){
+        return skill;
+    }
+    public String toString(){
+        return "Person: " + super.toString() + " " + skill;
+    }
 }

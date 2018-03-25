@@ -47,13 +47,13 @@ public class World extends Thing {
             break;
         }
     }
-    Ship getShipByIndex (int x) {
+    /*Ship getShipByIndex (int x) {
         for (SeaPort msp: ports)
         for (Ship ms: msp.ships)
         if (ms.index == x)
         return ms;
         return null;
-    } // end getShipByIndex
+    } // end getShipByIndex*/
     public void addPort(Scanner sc){
         SeaPort seaPort = new SeaPort(sc);
         ports.put(seaPort.getIndex(), seaPort);
@@ -61,7 +61,7 @@ public class World extends Thing {
     public void addDock(Scanner sc, HashMap<Integer, Dock> docks){
         Dock dock = new Dock(sc);
         dock.setThingObject(ports);
-        docks.put((dock.getIndex()).addDock(dock));
+        ports.get(dock.getIndex()).addDock(dock);
     }
     public void addPassengerShip(Scanner sc, HashMap<Integer, Dock> docks, HashMap<Integer, Ship> ships){
         PassengerShip passengerShip = new PassengerShip(sc);
@@ -72,6 +72,10 @@ public class World extends Thing {
         CargoShip cargoShip = new CargoShip(sc);
         ships.put(cargoShip.getIndex(), cargoShip);
         assignShip(cargoShip, docks);
+    }
+    public void addPerson(Scanner sc){
+        Person person = new Person(sc);
+        ports.get(person.getParent()).addPerson(person);
     }
 
     private void assignShip(Ship ship, HashMap<Integer, Dock> docks) {
