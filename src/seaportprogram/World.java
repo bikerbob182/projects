@@ -22,9 +22,9 @@ public class World extends Thing {
            ports = new HashMap<Integer, SeaPort>();
     }
 
-    public void process (String st) {
+    public void process (Scanner sc) {
         // System.out.println ("Processing >" + st + "<");
-        Scanner sc = new Scanner (st);
+        
         if (!sc.hasNext())
             return;
         switch (sc.next()) {

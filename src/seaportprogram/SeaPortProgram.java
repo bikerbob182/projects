@@ -26,30 +26,31 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
  * @author Hess
  */
 public class SeaPortProgram extends JFrame{
-
+    //declare static variable world
+    static World world;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws FileNotFoundException {
         new SeaPortProgram();
-        World world = new World();
+        world = new World();
         Scanner scan;
         String st = null;
         try{
             scan = new Scanner(new File(chooseFile()));
-            while(scan.hasNextLine()){
-                st = scan.nextLine();
-                world.process(st);
-            }
-            world.process(st);
+            world.process(scan);
+            scan = null;
+            
         } catch (FileNotFoundException e){
             e.printStackTrace();
         }
@@ -70,7 +71,7 @@ public class SeaPortProgram extends JFrame{
         int yPos = (dim.height / 2) - (this.getHeight() / 2); 
         setLocation(xPos, yPos);
         
-        setResizable(false);
+        setResizable(true);
         //build main panel
         JPanel window = new JPanel();
         window.setLayout(new BoxLayout(window, BoxLayout.Y_AXIS));
@@ -113,7 +114,7 @@ public class SeaPortProgram extends JFrame{
         JScrollPane scrollPane = new JScrollPane();
         TitledBorder titleBorder2 = new TitledBorder("Recompilation Order");
         textArea.setBorder(titleBorder2);
-        textAreaPanel.add(scrollPane);
+        textAreaPanel.add(textArea);
           
         //add panels to main panel
         window.add(inputPanel);
@@ -128,7 +129,7 @@ public class SeaPortProgram extends JFrame{
         selectFile.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            
+            textArea.setText(buildTree());
         }
         });
     }
@@ -143,6 +144,52 @@ public class SeaPortProgram extends JFrame{
                     
             return file;
         }
+    public JTree buildTree(){
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode("World");
+        createNodes(top);
+        JTree jTree = new JTree(top);
+        //SeaPortProgram.scrollPane = new JScrollPane(jTree);
+        return jTree;
+    }
+    public void createNodes(DefaultMutableTreeNode top) {
+        DefaultMutableTreeNode portNode;
+        for (SeaPort seaPort : world.ports.values()) {
+            portNode = createThingNode(seaPort);
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode("Docks");
+            for (Dock dock : seaPort.docks) {
+                DefaultMutableTreeNode dockNode = createThingNode(dock);
+                if (dock.getShip() != null) {
+                    DefaultMutableTreeNode shipNode = createThingNode(dock.getShip());
+                    dockNode.add(shipNode);
+                }
+                node.add(dockNode);
+                portNode.add(node);
+            }
+            node = new DefaultMutableTreeNode("Ships in Que");
+            for (Ship ship : seaPort.que) {
+                DefaultMutableTreeNode shipNode = createThingNode(ship);              
+                node.add(shipNode);
+                }
+                portNode.add(node);
+                node = new DefaultMutableTreeNode("All Ships");
+                for (Ship ship : seaPort.ships) {
+                    DefaultMutableTreeNode shipNode = createThingNode(ship);               
+                    node.add(shipNode);
+                }
+                portNode.add(node);
+                node = new DefaultMutableTreeNode("People");
+                for (Person person : seaPort.persons) {
+                    DefaultMutableTreeNode personNode = createThingNode(person);
+                    node.add(personNode);
+                }
+                portNode.add(node);
+                top.add(portNode);
+        }
+    }
+    //definition of the createThingNode() method
+    private DefaultMutableTreeNode createThingNode(Thing thing) {
+        return new DefaultMutableTreeNode(thing.getIndex() + " " + thing.getName());
+    }
 }
 
 
