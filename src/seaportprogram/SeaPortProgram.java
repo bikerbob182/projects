@@ -11,8 +11,10 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -20,7 +22,7 @@ import javax.swing.JTextArea;
  *
  * @author Hess
  */
-public class SeaPortProgram extends JFrame{
+public class SeaPortProgram {
     //declare static variable world
     static World world;
     private static JScrollPane scrollPane;
@@ -53,21 +55,38 @@ public class SeaPortProgram extends JFrame{
             }
             return file;
         }
-    public static class BuildGUI {
+    public static class BuildGUI extends JFrame{
         public BuildGUI(){
-            JTextArea textArea = new JTextArea(11, 52);
+            JFrame frame = new JFrame("Sea Port Progam");
+            frame.setSize(new Dimension(400, 300));
+
+            //build scrollpane           
+            JTextArea textArea = new JTextArea();
             textArea.setText(world.toString());
-            // create a scrollpane, givin it the textarea as a constructor argument
             JScrollPane scrollPane = new JScrollPane(textArea);
-            // now add the scrollpane to the jframe's content pane, specifically
-            // placing it in the center of the jframe's borderlayout
-            JFrame frame = new JFrame("JScrollPane Test");
+            //build button panel
+            JPanel buttonPanel = new JPanel();
+            JButton sort = new JButton("Search");
+            //sort.setPreferredSize(new Dimension(50,40));
+            buttonPanel.add(sort);
+            //build button panel 2
+            JPanel buttonPanel2 = new JPanel();
+            JButton reset = new JButton("Reset");
+            //reset.setPreferredSize(new Dimension(50,30));
+            buttonPanel2.add(reset);
+            //build space panels
+            JPanel spaceLeft = new JPanel();
+            JPanel spaceRight = new JPanel();
+            //add panels to JFrame
+            frame.getContentPane().add(buttonPanel, BorderLayout.PAGE_START);
             frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+            frame.getContentPane().add(buttonPanel2, BorderLayout.PAGE_END);
+            frame.getContentPane().add(spaceLeft, BorderLayout.LINE_START);
+            frame.getContentPane().add(spaceRight, BorderLayout.LINE_END);
+            
             // make it easy to close the application
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             // set the frame size (you'll usually want to call frame.pack())
-            frame.setSize(new Dimension(240, 180));
-            // center the frame
             frame.setLocationRelativeTo(null);
             // make it visible to the user
             frame.setVisible(true);
