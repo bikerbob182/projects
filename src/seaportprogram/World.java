@@ -6,7 +6,7 @@
  */
 package seaportprogram;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -16,38 +16,40 @@ import java.util.Scanner;
  */
 public class World extends Thing {
     HashMap<Integer, SeaPort> ports;
-    HashMap<Integer, Dock> docks = new HashMap();
-    HashMap<Integer, Ship> ships = new HashMap();
+    HashMap<Integer, Dock> docks = new HashMap<>();
+    HashMap<Integer, Ship> ships = new HashMap<>();
     PortTime time;
     public World(){
            ports = new HashMap<Integer, SeaPort>();
     }
 
-    public void process (Scanner sc) {
-        // System.out.println ("Processing >" + st + "<");
-        
-        if (!sc.hasNext())
-            return;
-        switch (sc.next()) {
-            case "port" : addPort (sc);
-            break;
-        }
-        switch (sc.next()) {
-            case "dock" : addDock (sc, docks);
-            break;
-        }
-        switch (sc.next()) {
-            case "pship" : addPassengerShip (sc, docks, ships);
-            break;
-        }
-        switch (sc.next()) {
-            case "cship" : addCargoShip (sc, docks, ships);
-            break;
-        }
-        switch (sc.next()) {
-            case "person" : addPerson (sc);
-            break;
-        }
+
+    // takes Scanner object and reads the data from the file
+    public void process (Scanner scan) {
+         //System.out.println ("Processing >" + st + "<");
+        while (scan.hasNextLine()) {
+            //read the line
+            String line = scan.nextLine();
+            //replace with space comma
+            line = line.replaceAll("^\\s+", "");
+            if (line.length() > 0 && line.charAt(0) != '/'){
+                Scanner sc = new Scanner(line);
+                if (!sc.hasNext())
+                    return;
+                switch (sc.next()) {
+                    case "port" : addPort (sc);
+                        break;
+                    case "dock" : addDock (sc, docks);
+                        break;
+                    case "pship" : addPassengerShip (sc, docks, ships);
+                        break;
+                    case "cship" : addCargoShip (sc, docks, ships);
+                        break;
+                    case "person" : addPerson (sc);
+                        break;
+                }            
+            }
+        } 
     }
     /*Ship getShipByIndex (int x) {
         for (SeaPort msp: ports)
@@ -63,7 +65,8 @@ public class World extends Thing {
     public void addDock(Scanner sc, HashMap<Integer, Dock> docks){
         Dock dock = new Dock(sc);
         dock.setThingObject(ports);
-        ports.get(dock.getIndex()).addDock(dock);
+        docks.put(dock.getIndex(), dock);
+        ports.get(dock.getParent()).addDock(dock);
     }
     public void addPassengerShip(Scanner sc, HashMap<Integer, Dock> docks, HashMap<Integer, Ship> ships){
         PassengerShip passengerShip = new PassengerShip(sc);

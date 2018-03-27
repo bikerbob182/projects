@@ -21,7 +21,7 @@ public class Thing implements Comparable<Thing> {
     }
     //declare variables
     Thing thingObject;
-    HashMap<Integer, Thing> parentHashMap;
+   
     int index;
     int parent;
     String name;
@@ -36,7 +36,7 @@ public class Thing implements Comparable<Thing> {
         this.parent = sc.nextInt();
     }
     //setter
-    public void setThingObject(HashMap parentHashmap){
+    public void setThingObject(HashMap parentHashMap){
         if(parentHashMap.get(parent) !=null)
             thingObject = (Thing) parentHashMap.get(parent);
     }
