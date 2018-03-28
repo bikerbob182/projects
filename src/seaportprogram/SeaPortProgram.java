@@ -11,12 +11,8 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
+
 
 /**
  *
@@ -39,7 +35,6 @@ public class SeaPortProgram {
             world.process(scan);
             scan = null;
             BuildGUI buildGUI = new BuildGUI();
-            System.out.println(world.toString());
        } catch (FileNotFoundException e){
             e.printStackTrace();
         }
@@ -56,6 +51,7 @@ public class SeaPortProgram {
             return file;
         }
     public static class BuildGUI extends JFrame{
+        private final String[] searchList = {"Name", "Index", "Skill"};
         public BuildGUI(){
             JFrame frame = new JFrame("Sea Port Progam");
             frame.setSize(new Dimension(400, 300));
@@ -64,11 +60,18 @@ public class SeaPortProgram {
             JTextArea textArea = new JTextArea();
             textArea.setText(world.toString());
             JScrollPane scrollPane = new JScrollPane(textArea);
-            //build button panel
-            JPanel buttonPanel = new JPanel();
-            JButton sort = new JButton("Search");
+            //build search panel
+            JPanel searchPanel = new JPanel();
+            JLabel searchBy = new JLabel("Search by:");
+            JButton searchButton = new JButton("Search");
+            JComboBox<String> petList = new JComboBox<String>(searchList);
+            JTextField searchInput = new JTextField();
+            searchInput.setPreferredSize(new Dimension(100,30));
             //sort.setPreferredSize(new Dimension(50,40));
-            buttonPanel.add(sort);
+            searchPanel.add(searchBy);
+            searchPanel.add(petList);
+            searchPanel.add(searchInput);
+            searchPanel.add(searchButton);            
             //build button panel 2
             JPanel buttonPanel2 = new JPanel();
             JButton reset = new JButton("Reset");
@@ -78,7 +81,7 @@ public class SeaPortProgram {
             JPanel spaceLeft = new JPanel();
             JPanel spaceRight = new JPanel();
             //add panels to JFrame
-            frame.getContentPane().add(buttonPanel, BorderLayout.PAGE_START);
+            frame.getContentPane().add(searchPanel, BorderLayout.PAGE_START);
             frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
             frame.getContentPane().add(buttonPanel2, BorderLayout.PAGE_END);
             frame.getContentPane().add(spaceLeft, BorderLayout.LINE_START);
