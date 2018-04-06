@@ -51,13 +51,6 @@ public class World extends Thing {
             }
         } 
     }
-    /*Ship getShipByIndex (int x) {
-        for (SeaPort msp: ports)
-        for (Ship ms: msp.ships)
-        if (ms.index == x)
-        return ms;
-        return null;
-    } // end getShipByIndex*/
     public void addPort(Scanner sc){
         SeaPort seaPort = new SeaPort(sc);
         ports.put(seaPort.getIndex(), seaPort);
@@ -99,6 +92,67 @@ public class World extends Thing {
         }
         ports.get(dock.getParent()).addShip(ship);
     }
+    Ship getShipByIndex (int x) {
+        for (SeaPort msp: ports.values())
+            for (Ship ms: msp.ships)
+                if (ms.index == x)
+                return ms;
+            return null;
+    } 
+    Dock getDockByIndex (int x) {
+        for (SeaPort msp: ports.values())
+            for (Dock ms: msp.docks)
+                if (ms.index == x)
+                return ms;
+            return null;
+    }
+    Person getPersonByIndex (int x) {
+        for (SeaPort msp: ports.values())
+            for (Person ms: msp.persons)
+                if (ms.index == x)
+                return ms;
+            return null;
+    } // end getShipByIndex 
+    public String searchByName(String str){
+        String result ="";
+        for (SeaPort port : ports.values()) {
+            for (Dock dock : port.docks) {
+                if (dock.getName().equalsIgnoreCase(str))
+                    result += dock.toString();
+            }
+            for (Ship ship : port.ships) {
+                if (ship.getName().equalsIgnoreCase(str))
+                    result += ship.toString();
+            }
+            for (Person person : port.persons) {
+                if (person.getName().equalsIgnoreCase(str))
+                    result += person.toString();
+            }
+            if (port.getName().equalsIgnoreCase(str))
+                    result += port.toString();
+        }
+        return result;
+    }
+    public String searchByIndex(Integer ind){
+        int index = ind;
+        String result ="";
+        result += (getDockByIndex(index) != null) ? getDockByIndex(index).toString() : "";
+        result += (getShipByIndex(index) != null) ? getShipByIndex(index).toString() : "";
+        result += (getPersonByIndex(index) != null) ? getPersonByIndex(index).toString() : "";   
+        result += (ports.get(index) != null) ? ports.get(index).toString() : "";
+        return result;
+    }
+    public String searchBySkill(String str){
+        String result = "";
+        for (SeaPort port : ports.values()) {
+            for (Person person : port.persons) {
+                if (person.getSkill().equalsIgnoreCase(str))
+                    result += person.toString();
+            }
+        }
+        return result;
+    }
+    
     public String toString(){
         String result = "The World: ";
         for (SeaPort sp : ports.values())

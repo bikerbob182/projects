@@ -8,9 +8,14 @@ package seaportprogram;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 
@@ -64,12 +69,12 @@ public class SeaPortProgram {
             JPanel searchPanel = new JPanel();
             JLabel searchBy = new JLabel("Search by:");
             JButton searchButton = new JButton("Search");
-            JComboBox<String> petList = new JComboBox<String>(searchList);
+            JComboBox<String> searchCrit = new JComboBox<String>(searchList);
             JTextField searchInput = new JTextField();
             searchInput.setPreferredSize(new Dimension(100,30));
             //sort.setPreferredSize(new Dimension(50,40));
             searchPanel.add(searchBy);
-            searchPanel.add(petList);
+            searchPanel.add(searchCrit);
             searchPanel.add(searchInput);
             searchPanel.add(searchButton);            
             //build button panel 2
@@ -93,8 +98,37 @@ public class SeaPortProgram {
             frame.setLocationRelativeTo(null);
             // make it visible to the user
             frame.setVisible(true);
-        }
+            
+            //construct button actions
+            searchButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    searchFor(searchCrit.getSelectedItem(), searchInput.getText());             
+                } 
+            });            
+        }     
     }
+    public static void searchFor(Object obj, String st){
+        Object selection = obj;  
+        String str = st;
+        //search based off jcombo box selection and input
+        if(selection.equals("Name")){
+            System.out.println(world.searchByName(str));
+            
+        }
+        else if(selection.equals("Index")){
+            int index = 0;
+            try {
+                index = Integer.parseInt(str);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Plese Enter a Valid Number");
+                }
+            System.out.println(world.searchByIndex(index));
+        }
+        else if(selection.equals("Skill")){
+            System.out.println(world.searchBySkill(str));
+        }     
+    }    
 }
 
 
