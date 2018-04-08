@@ -7,6 +7,8 @@
 package seaportprogram;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 /**
@@ -14,10 +16,10 @@ import java.util.Scanner;
  * @author Hess
  */
 class SeaPort extends Thing {
-    ArrayList<Dock> docks = new ArrayList();
-    ArrayList<Ship> que = new ArrayList();
-    ArrayList<Ship> ships = new ArrayList();
-    ArrayList<Person> persons = new ArrayList();
+    ArrayList<Dock> docks = new ArrayList<Dock>();
+    ArrayList<Ship> que = new ArrayList<Ship>();
+    ArrayList<Ship> ships = new ArrayList<Ship>();
+    ArrayList<Person> persons = new ArrayList<Person>();
     
     public SeaPort (Scanner sc){
         super(sc);
@@ -33,6 +35,51 @@ class SeaPort extends Thing {
     }
     public void addPerson(Person person){
         persons.add(person);
+    }
+
+    public void sortByWeight() {
+        Collections.sort(que, new Comparator<Ship>() {
+            @Override
+            public int compare(Ship s1, Ship s2) {
+                return (s1.weight < s2.weight ? -1 : (s1.weight == s2.weight ? 0 : 1));
+            }
+        });
+    }
+    public void sortByLength() {
+        Collections.sort(que, new Comparator<Ship>() {
+            @Override
+            public int compare(Ship s1, Ship s2) {
+                return (s1.length < s2.length ? -1 : (s1.length == s2.length ? 0 : 1));
+            }
+        });
+    }
+    public void sortByWidth() {
+        Collections.sort(que, new Comparator<Ship>() {
+            @Override
+            public int compare(Ship s1, Ship s2) {
+                return (s1.width < s2.width ? -1 : (s1.width == s2.width ? 0 : 1));
+            }
+        });
+    }
+    public void sortByDraft() {
+        Collections.sort(que, new Comparator<Ship>() {
+            @Override
+            public int compare(Ship s1, Ship s2) {
+                return (s1.draft < s2.draft ? -1 : (s1.draft == s2.draft ? 0 : 1));
+            }
+        });
+    }
+    public void sortAllListsByName() {
+        Collections.sort(ships);
+        Collections.sort(docks);
+        Collections.sort(persons);
+        Collections.sort(que);
+        //for (Ship ship : ships) {
+          //  Collections.sort(ship.ships);
+        //}
+        //for (Ship ship : que) {
+          //  Collections.sort(ship.ships);
+        //}
     }
     public String toString () {
         String st = "\n\nSeaPort: " + super.toString();

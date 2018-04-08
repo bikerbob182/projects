@@ -7,7 +7,10 @@
 package seaportprogram;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -152,7 +155,115 @@ public class World extends Thing {
         }
         return result;
     }
-    
+    public String sortPersonByName(){
+        List<SeaPort> list = new ArrayList<SeaPort>();
+        String result = "";
+        for (SeaPort seaPort : ports.values()) {
+            seaPort.sortAllListsByName();
+            list.add(seaPort);  
+        }   
+        Collections.sort(list);
+        for (SeaPort seaPort : list) {
+            result += "\n People:\n ";
+            for (Person person : seaPort.persons) {
+                result += person.getName() + "\n ";
+            }
+        }
+        return result;
+    }
+    public String sortPersonBySkill(){
+        String result = "";
+        //sort people by skill code 
+        return result;
+    }
+    public String sortDockByName(){
+    List<SeaPort> list = new ArrayList<SeaPort>();
+        String result = "";
+        for (SeaPort seaPort : ports.values()) {
+            seaPort.sortAllListsByName();
+            list.add(seaPort);  
+        }   
+        Collections.sort(list);
+        for (SeaPort seaPort : list) {
+            result += "\n Docks:\n ";
+            for (Dock dock : seaPort.docks) {
+                result += dock.getName() + "\n ";
+            }
+        }
+        return result;
+    }
+    public String sortShipByName() {
+        List<SeaPort> list = new ArrayList<SeaPort>();
+        String result = "";
+        for (SeaPort seaPort : ports.values()) {
+            seaPort.sortAllListsByName();
+            list.add(seaPort);  
+        }   
+        Collections.sort(list);
+        for (SeaPort seaPort : list) {
+            result += seaPort.getName() + "\n Ships:\n ";
+            for (Ship ship : seaPort.ships) {
+                result += ship.getName() + "\n ";
+            }
+        }
+        return result;
+    }
+
+    public String sortShipByWeight() {  
+        String result = "";
+        for (SeaPort seaPort : ports.values()) {
+            seaPort.sortByWeight();
+            result += "Port: ";
+            result += seaPort.getName() + "\n Ships:\n ";
+            for (Ship ship : seaPort.que) {
+                result += ship.getName() + ": " + ship.weight + "\n ";
+            }
+            result += "\n";
+        }
+        return result;
+    }
+
+    public String sortShipByLength() {
+        String result = ""; 
+        for (SeaPort seaPort : ports.values()) {
+            seaPort.sortByLength();
+            result += "Port: ";
+            result += seaPort.getName() + "\n Ships:\n ";
+            for (Ship ship : seaPort.que) {
+                result += ship.getName() + ": " + ship.length + "\n ";
+            }
+            result += "\n";
+        }
+        return result;
+    }
+
+    public String sortShipByWidth() {
+        String result = "";
+        for (SeaPort seaPort : ports.values()) {
+            seaPort.sortByWidth();
+            result += "Port: ";
+            result += seaPort.getName() + "\n Ships:\n ";
+            for (Ship ship : seaPort.que) {
+                result += ship.getName() + ": " + ship.width + "\n ";
+            }
+            result += "\n";
+        }
+        return result;
+    }
+
+    public String sortShipByDraft() {
+        String result = "";
+        for (SeaPort seaPort : ports.values()) {
+            seaPort.sortByDraft();
+            result += "Port: ";
+            result += seaPort.getName() + "\n Ships:\n ";
+            for (Ship ship : seaPort.que) {
+                result += ship.getName() + ": " + ship.draft + "\n ";
+            }
+            result += "\n";
+        }
+        return result;
+    }
     public String toString(){
         String result = "The World: ";
         for (SeaPort sp : ports.values())

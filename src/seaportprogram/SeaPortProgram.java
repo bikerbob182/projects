@@ -8,6 +8,8 @@ package seaportprogram;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -57,6 +59,9 @@ public class SeaPortProgram {
         }
     public static class BuildGUI extends JFrame{
         private final String[] searchList = {"Name", "Index", "Skill"};
+        private final String [] sortList1 = {"Ship", "Dock", "Person",};
+        private final String [] sortList2 = {"Name", "Weight", "Length", "Width", "Draft"};
+        private final String [] sortList3 = {"Name", "Skill" };
         public BuildGUI(){
             JFrame frame = new JFrame("Sea Port Progam");
             frame.setSize(new Dimension(400, 300));
@@ -66,22 +71,55 @@ public class SeaPortProgram {
             textArea.setText(world.toString());
             JScrollPane scrollPane = new JScrollPane(textArea);
             //build search panel
-            JPanel searchPanel = new JPanel();
+            JPanel searchPanel = new JPanel(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
             JLabel searchBy = new JLabel("Search by:");
             JButton searchButton = new JButton("Search");
+            JLabel sortBy = new JLabel("Sort by");
+            JButton sortButton = new JButton("Sort");
             JComboBox<String> searchCrit = new JComboBox<String>(searchList);
+            JComboBox<String> sortCrit = new JComboBox<String>(sortList1);
+            JComboBox<String> sortCrit2 = new JComboBox<String>(sortList2);
             JTextField searchInput = new JTextField();
             searchInput.setPreferredSize(new Dimension(100,30));
             //sort.setPreferredSize(new Dimension(50,40));
-            searchPanel.add(searchBy);
-            searchPanel.add(searchCrit);
-            searchPanel.add(searchInput);
-            searchPanel.add(searchButton);            
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            searchPanel.add(searchBy, gbc);
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            searchPanel.add(searchCrit, gbc);
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.gridx = 2;
+            gbc.gridy = 0;
+            searchPanel.add(searchInput, gbc);
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.gridx = 3;
+            gbc.gridy = 0;
+            searchPanel.add(searchButton, gbc);
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            searchPanel.add(sortBy, gbc);
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            searchPanel.add(sortCrit, gbc);
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.gridx = 2;
+            gbc.gridy = 1;
+            searchPanel.add(sortCrit2, gbc);
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.gridx = 3;
+            gbc.gridy = 1;
+            searchPanel.add(sortButton, gbc);
             //build button panel 2
             JPanel buttonPanel2 = new JPanel();
-            JButton reset = new JButton("Reset");
+            JButton resetButton = new JButton("Reset");
             //reset.setPreferredSize(new Dimension(50,30));
-            buttonPanel2.add(reset);
+            buttonPanel2.add(resetButton);
             //build space panels
             JPanel spaceLeft = new JPanel();
             JPanel spaceRight = new JPanel();
@@ -103,31 +141,90 @@ public class SeaPortProgram {
             searchButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    searchFor(searchCrit.getSelectedItem(), searchInput.getText());             
+                    Object selection = searchCrit.getSelectedItem(); 
+                    String str = searchInput.getText();  
+                    if(selection.equals("Name")){
+                        textArea.setText(world.searchByName(str));                        
+                    }
+                    else if(selection.equals("Index")){
+                        int index = 0;
+                        try {
+                            index = Integer.parseInt(str);
+                        } catch (NumberFormatException f) {
+                            JOptionPane.showMessageDialog(null, "Plese Enter a Valid Number");
+                        }
+                        textArea.setText(world.searchByIndex(index));
+                    }
+                    else if(selection.equals("Skill")){
+                        textArea.setText(world.searchBySkill(str));
+                    }                    
                 } 
-            });            
-        }     
-    }
-    public static void searchFor(Object obj, String st){
-        Object selection = obj;  
-        String str = st;
-        //search based off jcombo box selection and input
-        if(selection.equals("Name")){
-            System.out.println(world.searchByName(str));
-            
+            });
+            resetButton.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    textArea.setText(world.toString());
+                }  
+            });
+            sortCrit.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Object selection = sortCrit.getSelectedItem();
+                    if(selection.equals("Ship")){
+                        sortCrit2.removeAllItems();
+                        for(String str : sortList2) {
+                            sortCrit2.addItem(str);
+                        }
+                    }
+                    else if(selection.equals("Person")){
+                        sortCrit2.removeAllItems();
+                        for(String str : sortList3) {
+                            sortCrit2.addItem(str);
+                        }
+                    }
+                    else{
+                        sortCrit2.removeAllItems();
+                        sortCrit2.addItem("Name");
+                    }
+                }  
+            });
+            sortButton.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Object selection = sortCrit.getSelectedItem();
+                    Object selection2 = sortCrit2.getSelectedItem();
+                    if(selection.equals("Ship")){
+                        if(selection2.equals("Name")){
+                            textArea.setText(world.sortShipByName());
+                        }
+                        else if(selection2.equals("Weight")){
+                            textArea.setText(world.sortShipByWeight());
+                        }
+                        else if(selection2.equals("Length")){
+                            textArea.setText(world.sortShipByLength());
+                        }
+                        else if(selection2.equals("Width")){
+                            textArea.setText(world.sortShipByWidth());
+                        }
+                        else if(selection2.equals("Draft")){
+                            textArea.setText(world.sortShipByDraft());
+                        }
+                    }
+                    else if(selection.equals("Person")){
+                        if(selection2.equals("Name")){
+                            textArea.setText(world.sortPersonByName());
+                        }
+                        else if(selection2.equals("Skill")){
+                            textArea.setText(world.sortPersonBySkill());
+                        }
+                    }
+                    else if(selection.equals("Dock")){
+                        textArea.setText(world.sortDockByName());
+                    }
+                    
+                }  
+            });
         }
-        else if(selection.equals("Index")){
-            int index = 0;
-            try {
-                index = Integer.parseInt(str);
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(null, "Plese Enter a Valid Number");
-                }
-            System.out.println(world.searchByIndex(index));
-        }
-        else if(selection.equals("Skill")){
-            System.out.println(world.searchBySkill(str));
-        }     
     }    
 }
 
