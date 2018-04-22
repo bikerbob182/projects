@@ -75,12 +75,23 @@ class SeaPort extends Thing {
         Collections.sort(docks);
         Collections.sort(persons);
         Collections.sort(que);
-        //for (Ship ship : ships) {
-          //  Collections.sort(ship.ships);
-        //}
-        //for (Ship ship : que) {
-          //  Collections.sort(ship.ships);
-        //}
+    }
+    
+    public Ship getShipFromQue(){
+        synchronized (this){
+            if(que.size() > 0){
+                Ship ship = que.get(que.size()-1);
+                que.remove(ship);
+                return ship;
+            }
+        }
+        return null;
+    }
+    
+    public synchronized void checkDocksAtSeaPort(){
+        for (Dock dock : docks){
+            dock.checkDocksAtDock();
+        }
     }
     public String toString () {
         String st = "\n\nSeaPort: " + super.toString();

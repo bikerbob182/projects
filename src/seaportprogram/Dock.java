@@ -29,6 +29,17 @@ class Dock extends Thing {
             }
         }
     }
+    
+    public void checkDocksAtDock(){
+        if(ship == null || ship.ships.size() == 0)
+            requestNewShip();
+    }
+    
+    public void requestNewShip(){
+        Ship ship = ((SeaPort) thingObject).getShipFromQue();
+        if (ship != null)
+            setShip(ship);
+    }
     public String toString(){
         if(ship != null)
             return "\n Dock: " + super.toString() + "\n " + ship.toString();

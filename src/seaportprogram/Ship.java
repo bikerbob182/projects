@@ -5,6 +5,7 @@
  * Purpose: Build a data stucture from text file and display in GUI 
  */
 package seaportprogram;
+import java.util.ArrayList;
 import java.util.Scanner;
 /**
  *
@@ -14,6 +15,10 @@ public class Ship extends Thing{
     //variables
     double draft, weight, length, width;
     PortTime arrivalTime, dockTime;
+    public final Object lock = new Object();
+    public boolean shipInProcess;
+    ArrayList<Job> ships = new ArrayList<Job>();
+    
     public Ship(Scanner key){
         super(key);
         if(key.hasNextDouble())
@@ -25,5 +30,23 @@ public class Ship extends Thing{
         if(key.hasNextDouble())
             draft = key.nextDouble();
         dockTime = new PortTime();     
-    } 
+    }
+    public boolean isShipDocked(){
+        if (thingObject instanceof SeaPort)
+            ((SeaPort) thingObject).checkDocksAtSeaPort();
+        else
+            ((Dock)thingObject).checkDocksAtDock();
+        return thingObject instanceof Dock && ((Dock)thingObject).getShip() ==  this;
+    }
+    public boolean processShip(){
+        boolean process = false;
+        synchronized (lock){
+            if(!shipInProcess){
+                shipInProcess = true;
+                process = true;
+            }
+        }
+        return process;
+    }
+    
 }
