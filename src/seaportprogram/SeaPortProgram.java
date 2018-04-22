@@ -82,6 +82,14 @@ public class SeaPortProgram {
             JComboBox<String> sortCrit2 = new JComboBox<String>(sortList2);
             JTextField searchInput = new JTextField();
             searchInput.setPreferredSize(new Dimension(100,30));
+            JPanel containerForJobs = new JPanel();
+            for (SeaPort seaPort : world.portsMap.values()){
+            for(Ship ship : seaPort.ships){
+            for (Job job : ship.ships){
+                containerForJobs.add(job.getPanel());
+            }
+            }
+            }
             //sort.setPreferredSize(new Dimension(50,40));
             gbc.anchor = GridBagConstraints.CENTER;
             gbc.gridx = 0;
@@ -115,6 +123,8 @@ public class SeaPortProgram {
             gbc.gridx = 3;
             gbc.gridy = 1;
             searchPanel.add(sortButton, gbc);
+            
+            
             //build button panel 2
             JPanel buttonPanel2 = new JPanel();
             JButton resetButton = new JButton("Reset");
@@ -128,7 +138,7 @@ public class SeaPortProgram {
             frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
             frame.getContentPane().add(buttonPanel2, BorderLayout.PAGE_END);
             frame.getContentPane().add(spaceLeft, BorderLayout.LINE_START);
-            frame.getContentPane().add(spaceRight, BorderLayout.LINE_END);
+            frame.getContentPane().add(containerForJobs, BorderLayout.LINE_END);
             
             // make it easy to close the application
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

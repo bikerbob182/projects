@@ -32,8 +32,8 @@ public class Job2 extends Thing implements Runnable {
  
   enum Status {RUNNING, SUSPENDED, WAITING, DONE};
 
-  public Job2 (HashMap <Integer, Thing> hmElements, JPanel cv, Scanner sc) {
-    parent = cv;
+  public Job2 (HashMap <Integer, Thing> hmElements, JPanel buildGUI, Scanner sc) {
+    parent = buildGUI;
     sc.next (); // dump first field, j
     jobIndex = sc.nextInt ();
     jobName = sc.next ();
