@@ -29,7 +29,7 @@ public class Ship extends Thing{
             width = key.nextDouble();
         if(key.hasNextDouble())
             draft = key.nextDouble();
-        dockTime = new PortTime();     
+            dockTime = new PortTime();     
     }
     public boolean isShipDocked(){
         if (thingObject instanceof SeaPort)
@@ -48,5 +48,23 @@ public class Ship extends Thing{
         }
         return process;
     }
-    
+    public void removeShip(Job ship){
+        synchronized (lock){
+            shipInProcess = false;
+        }
+        if (ships.size() > 0 && ships.contains(ship))
+            ships.remove(ship);
+        if (ships.size() == 0){
+            ((Dock) thingObject).leaveShipFromDock();
+        }
+    }
+    public String toString(){
+        String returns = (this instanceof PassengerShip ? "Passenger " : "Cargo ");
+        returns += "Ship: " + super.toString();
+        if (ships.size() == 0)
+            return returns;
+        for (Job job : ships)
+            returns += "\n - " + job.toString();
+        return returns;
+    }
 }

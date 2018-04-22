@@ -15,7 +15,7 @@ import java.util.Scanner;
 class Dock extends Thing {
     Ship ship;
 
-    Dock(Scanner sc) {
+    public Dock(Scanner sc) {
         super(sc);
     }
     public Ship getShip(){
@@ -40,6 +40,12 @@ class Dock extends Thing {
         if (ship != null)
             setShip(ship);
     }
+    
+    public void leaveShipFromDock() {
+        setShip(null);
+        checkDocksAtDock();
+    }
+    
     public String toString(){
         if(ship != null)
             return "\n Dock: " + super.toString() + "\n " + ship.toString();

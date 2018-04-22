@@ -51,7 +51,7 @@ public class Thing implements Comparable<Thing> {
         return parent;
     }
     //toString method
-    public String toString(){
+    synchronized public String toString(){
         return name + " " + index;
     }
     

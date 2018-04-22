@@ -18,12 +18,7 @@ import java.util.Scanner;
  * @author Hess
  */
 public class World extends Thing {
-    public static void setValue(){     
-        value = true;
-    }
-    public static boolean getValue(){
-        return value;
-    }
+    
     HashMap<Integer, SeaPort> portsMap;
     HashMap<Integer, Dock> docksMap = new HashMap<>();
     HashMap<Integer, Ship> shipsMap = new HashMap<>();
@@ -31,6 +26,12 @@ public class World extends Thing {
     static boolean value = false;
     public World(){
            portsMap = new HashMap<Integer, SeaPort>();
+    }
+    public static void setValue(){     
+        value = true;
+    }
+    public static boolean getValue(){
+        return value;
     }
     
     

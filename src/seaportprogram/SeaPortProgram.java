@@ -63,9 +63,11 @@ public class SeaPortProgram {
         private final String [] sortList2 = {"Name", "Weight", "Length", "Width", "Draft"};
         private final String [] sortList3 = {"Name", "Skill" };
         public BuildGUI(){
+            
             JFrame frame = new JFrame("Sea Port Progam");
-            frame.setSize(new Dimension(400, 300));
-
+            frame.setSize(new Dimension(800, 600));
+            JPanel leftPanel = new JPanel();
+           
             //build scrollpane           
             JTextArea textArea = new JTextArea();
             textArea.setText(world.toString());
@@ -83,6 +85,7 @@ public class SeaPortProgram {
             JTextField searchInput = new JTextField();
             searchInput.setPreferredSize(new Dimension(100,30));
             JPanel containerForJobs = new JPanel();
+            containerForJobs.setLayout(new BoxLayout(containerForJobs, BoxLayout.Y_AXIS));
             for (SeaPort seaPort : world.portsMap.values()){
             for(Ship ship : seaPort.ships){
             for (Job job : ship.ships){
@@ -90,6 +93,8 @@ public class SeaPortProgram {
             }
             }
             }
+            JScrollPane jobsScrollPane = new JScrollPane(containerForJobs);
+            jobsScrollPane.setMaximumSize(new Dimension(5660,800));
             //sort.setPreferredSize(new Dimension(50,40));
             gbc.anchor = GridBagConstraints.CENTER;
             gbc.gridx = 0;
@@ -134,12 +139,14 @@ public class SeaPortProgram {
             JPanel spaceLeft = new JPanel();
             JPanel spaceRight = new JPanel();
             //add panels to JFrame
-            frame.getContentPane().add(searchPanel, BorderLayout.PAGE_START);
-            frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
-            frame.getContentPane().add(buttonPanel2, BorderLayout.PAGE_END);
-            frame.getContentPane().add(spaceLeft, BorderLayout.LINE_START);
-            frame.getContentPane().add(containerForJobs, BorderLayout.LINE_END);
+            leftPanel.add(searchPanel, BorderLayout.PAGE_START);
+            leftPanel.add(scrollPane, BorderLayout.CENTER);
+            leftPanel.add(buttonPanel2, BorderLayout.PAGE_END);
+            leftPanel.add(spaceLeft, BorderLayout.LINE_START);
+            leftPanel.add(spaceRight, BorderLayout.LINE_END);
             
+            JSplitPane jSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, jobsScrollPane);
+            frame.add(jSplitPane);
             // make it easy to close the application
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             // set the frame size (you'll usually want to call frame.pack())

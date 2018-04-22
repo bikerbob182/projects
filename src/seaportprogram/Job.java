@@ -40,11 +40,11 @@ public class Job extends Thing implements Runnable {
     public Job(Scanner sc) {
         super(sc);
         duration = (long) sc.nextDouble();
-        while (sc.hasNext()) {
-            String requirement = sc.next();
-            if (requirement != null && requirement.length() > 0)
-                requirements.add(requirement);
-        }
+        //while (sc.hasNext()) {
+            //String requirement = sc.next();
+            //if (requirement != null && requirement.length() > 0)
+              //  requirements.add(requirement);
+        //}
         System.out.println(this.toString());
     }
 
@@ -155,6 +155,7 @@ public class Job extends Thing implements Runnable {
         }
         bar.setValue(100);
         showStatus(Status.DONE);
+        parentShip.removeShip(removedJob);
     }
 
     private void waitTime(long l) {
