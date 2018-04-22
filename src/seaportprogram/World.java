@@ -50,6 +50,8 @@ public class World extends Thing {
                         break;
                     case "person" : addPerson (sc);
                         break;
+                    case "job" : addJob (sc, ships);
+                        break;
                 }            
             }
         } 
@@ -77,6 +79,13 @@ public class World extends Thing {
     public void addPerson(Scanner sc){
         Person person = new Person(sc);
         ports.get(person.getParent()).addPerson(person);
+    }
+    private void addJob(Scanner sc, HashMap<Integer, Ship> shipHashMap) {
+        Job job = new Job(sc);
+        if (shipHashMap.get(job.getParent()) != null){
+            job.setThingObject(shipHashMap);
+            shipHashMap.get(job.getParent()).ships.add(job);
+        }
     }
 
     private void assignShip(Ship ship, HashMap<Integer, Dock> docks) {

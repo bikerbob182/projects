@@ -20,6 +20,7 @@ class SeaPort extends Thing {
     ArrayList<Ship> que = new ArrayList<Ship>();
     ArrayList<Ship> ships = new ArrayList<Ship>();
     ArrayList<Person> persons = new ArrayList<Person>();
+    ArrayList <Job> jobs = new ArrayList <Job>(); 
     
     public SeaPort (Scanner sc){
         super(sc);
