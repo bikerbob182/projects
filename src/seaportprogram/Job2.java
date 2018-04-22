@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package seaportprogram;
 
 import javax.swing.*;
@@ -11,139 +6,169 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.Scanner;
-/**
- *
- * @author Hess
- */
+
 public class Job2 extends Thing implements Runnable {
-  static Random rn = new Random ();
-  JPanel parent;
-  Person worker = null;
-  int jobIndex;
-  long jobTime;
-  String jobName = "";
-  JProgressBar pm = new JProgressBar ();
-  boolean goFlag = true, noKillFlag = true;
-  JButton jbGo   = new JButton ("Stop");
-  JButton jbKill = new JButton ("Cancel");
-  Status status = Status.SUSPENDED;
- 
-  enum Status {RUNNING, SUSPENDED, WAITING, DONE};
-
-  public Job2 (HashMap <Integer, Thing> hmElements, JPanel buildGUI, Scanner sc) {
-    parent = buildGUI;
-    sc.next (); // dump first field, j
-    jobIndex = sc.nextInt ();
-    jobName = sc.next ();
-    int target = sc.nextInt ();
-    worker = (Person) (hmElements.get (target));
-    jobTime = sc.nextInt ();
-    pm = new JProgressBar ();
-    pm.setStringPainted (true);
-    parent.add (pm);
-    parent.add (new JLabel (worker.name, SwingConstants.CENTER));
-    parent.add (new JLabel (jobName    , SwingConstants.CENTER));
+    private ArrayList<String> requirements = new ArrayList<String>();
+    JPanel containerPanel;
+    long duration;
+    JProgressBar pm = new JProgressBar();
+    boolean goFlag = true, noKillFlag = true;
+    JButton jbGo = new JButton("Stop");
+    JButton jbKill = new JButton("Cancel");
+    Status status = Status.WAITING;
+    Job toBeRemoved;
+    Ship parentShip;
     
-    parent.add (jbGo);
-    parent.add (jbKill);
+    enum Status {RUNNING, SUSPENDED, WAITING, DONE}
     
-    jbGo.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent e) {
-        toggleGoFlag ();
-      }
-    });
-
-    jbKill.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent e) {
-        setKillFlag ();
-      }
-    });
-   
-    new Thread (this).start();
-  } // end constructor
-
-//     JLabel jln = new JLabel (worker.name);
-//       following shows how to align text relative to icon
-//     jln.setHorizontalTextPosition (SwingConstants.CENTER);
-//     jln.setHorizontalAlignment (SwingConstants.CENTER);
-//     parent.jrun.add (jln);
- 
-  public void toggleGoFlag () {
-    goFlag = !goFlag;
-  } // end method toggleRunFlag
- 
-  public void setKillFlag () {
-    noKillFlag = false;
-    jbKill.setBackground (Color.red);
-  } // end setKillFlag
- 
-  void showStatus (Status st) {
-    status = st;
-    switch (status) {
-      case RUNNING:
-        jbGo.setBackground (Color.green);
-        jbGo.setText ("Running");
-        break;
-      case SUSPENDED:
-        jbGo.setBackground (Color.yellow);
-        jbGo.setText ("Suspended");
-        break;
-      case WAITING:
-        jbGo.setBackground (Color.orange);
-        jbGo.setText ("Waiting turn");
-        break;
-      case DONE:
-        jbGo.setBackground (Color.red);
-        jbGo.setText ("Done");
-        break;
-    } // end switch on status
-  } // end showStatus
-
-  public void run () {
-    long time = System.currentTimeMillis();
-    long startTime = time;
-    long stopTime = time + 1000 * jobTime;
-    double duration = stopTime - time;
-    
-    synchronized (worker.party) { // party since looking forward to P4 requirements
-      while (worker.busyFlag) {
-        showStatus (Status.WAITING);
-        try {
-          worker.party.wait();
+    public Job(Scanner sc) {
+        super(sc);
+        duration = (long) sc.nextDouble();
+        while (sc.hasNext()) {
+            String requirement = sc.next();
+            if (requirement != null && requirement.length() > 0)
+                requirements.add(requirement);
         }
-        catch (InterruptedException e) {
-        } // end try/catch block
-      } // end while waiting for worker to be free
-      worker.busyFlag = true;
-    } // end sychronized on worker
-
-    while (time < stopTime && noKillFlag) {
-      try {
-        Thread.sleep (100);
-      } catch (InterruptedException e) {}
-      if (goFlag) {
-        showStatus (Status.RUNNING);
-        time += 100;
-        pm.setValue ((int)(((time - startTime) / duration) * 100));
-      } else {
-        showStatus (Status.SUSPENDED);
-      } // end if stepping
-    } // end runninig
-
-    pm.setValue (100);
-    showStatus (Status.DONE);
-    synchronized (worker.party) {
-      worker.busyFlag = false;
-      worker.party.notifyAll ();
     }
 
-  } // end method run - implements runnable
- 
-  public String toString () {
-    String sr = String.format ("j:%7d:%15s:%7d:%5d", jobIndex, jobName, worker.index, jobTime);
-    return sr;
-  } //end method toString
- 
-} // end class Job
+    public void setParentThing(HashMap parentThing) {
+        if (parentThing.get(getParent()) != null) {
+            this.parentThing = (Thing) parentThing.get(getParent());
+            parentShip = (Ship) this.parentThing;
+            setVisualElements();
+            toBeRemoved = this;
+            new Thread(this).start();
+        }
+    }
+
+    private void setVisualElements() {
+        containerPanel = new JPanel();
+        pm = new JProgressBar();
+        pm.setStringPainted(true);
+        jbGo.setMinimumSize(new Dimension(120, 25));
+        jbGo.setMaximumSize(new Dimension(120, 25));
+        GroupLayout groupLayout = new GroupLayout(containerPanel);
+        containerPanel.setLayout(groupLayout);
+        setLayout(groupLayout);
+        setActionListeners();
+    }
+    
+    private void setLayout(GroupLayout groupLayout) {
+        groupLayout.setAutoCreateGaps(true);
+        groupLayout.setAutoCreateContainerGaps(true);
+        JLabel jLabel = new JLabel(parentShip.getName(), SwingConstants.CENTER);
+        jLabel.setMinimumSize(new Dimension(150, 25));
+        jLabel.setMaximumSize(new Dimension(150, 25));
+        groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
+        .addComponent(pm)
+        .addComponent(jLabel)
+        .addComponent(jbGo)
+        .addComponent(jbKill));
+        groupLayout.setVerticalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        .addComponent(pm)
+        .addComponent(jLabel)
+        .addComponent(jbGo)
+        .addComponent(jbKill));
+    }
+        
+    public JPanel getContainerPanel() {
+        return containerPanel;
+    }
+
+    private void setActionListeners() {
+        jbGo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                toggleGoFlag();
+            }
+        });
+        jbKill.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setKillFlag();
+            }
+        });
+    }
+    
+    public void toggleGoFlag() {
+        goFlag = !goFlag;
+    }
+
+    public void setKillFlag() {
+        noKillFlag = false;
+        jbKill.setBackground(Color.red);
+    }
+
+    void showStatus(Status st) {
+        status = st;
+        switch (status) {
+            case RUNNING: jbGo.setBackground(Color.green); jbGo.setText("Running");
+                break;
+            case SUSPENDED: jbGo.setBackground(Color.yellow); jbGo.setText("Suspended");
+                break;
+            case WAITING: jbGo.setBackground(Color.orange); jbGo.setText("Waiting turn");
+                break;
+            case DONE: jbGo.setBackground(Color.red); jbGo.setText("Done");
+                break;
+        }
+    }
+    
+    public void run() {
+        while (!World.getInit()) // wait for the world to be initialized, otherwise simulation does not work properly
+            waitFor(300);
+            while (!parentShip.isDocked()) {
+                waitFor(100);
+            }
+            while (!parentShip.doJob()) {
+                waitFor(100);
+            }
+            ArrayList<Person> workers = null;
+            if (requirements.size() == 0 || parentShip.askForPersonnel(requirements)) {
+                if (requirements.size() != 0) {
+                    do {
+                        waitFor(100);
+                        workers = parentShip.requestWorkers(requirements, toBeRemoved);
+                    } while (workers == null || workers.size() != requirements.size());
+                }
+                long time = System.currentTimeMillis();
+                long startTime = time;
+                long stopTime = time + 1000 * duration;
+                double duration = stopTime - time;
+                while (time < stopTime && noKillFlag) {
+                    waitFor(100);
+                    if (goFlag) {
+                    showStatus(Status.RUNNING);
+                    time += 100;
+                    pm.setValue((int) (((time - startTime) / duration) * 100));
+                    } else {
+                    showStatus(Status.SUSPENDED);
+                    }
+                }
+                pm.setValue(100);
+                showStatus(Status.DONE);
+            } else {
+                showStatus(Status.SUSPENDED);
+            }
+            if (workers != null && workers.size() > 0)
+                parentShip.releaseWorkers(workers);
+                parentShip.removeJob(toBeRemoved);
+            }
+
+private void waitFor(long l) {
+
+try {
+
+Thread.sleep(l);
+
+} catch (InterruptedException e) {
+
+}
+
+}
+
+public String toString() {
+
+return String.format("j:%7d:%15s:%5d", getIndex(), getName(), duration);
+
+}
+
+}
