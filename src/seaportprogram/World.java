@@ -171,9 +171,21 @@ public class World extends Thing {
         }
         return result;
     }
+    //Cant figure out how to do without sorting into more data structures?
     public String sortPersonBySkill(){
+        List<SeaPort> list = new ArrayList<SeaPort>();
         String result = "";
-        //sort people by skill code 
+        for (SeaPort seaPort : ports.values()) {
+            seaPort.sortAllListsByName();
+            list.add(seaPort);  
+        }   
+        Collections.sort(list);
+        for (SeaPort seaPort : list) {
+            result += "\n People:\n ";
+            for (Person person : seaPort.persons) {
+                result += person.getSkill() + "\n ";
+            }
+        }
         return result;
     }
     public String sortDockByName(){
