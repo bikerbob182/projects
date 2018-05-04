@@ -58,6 +58,15 @@ public class Ship extends Thing{
             ((Dock) thingObject).leaveShipFromDock();
         }
     }
+    boolean askForPersonnel(ArrayList<String> requirements) {
+        return ((Dock) thingObject).askForPersonnel(requirements);
+    }
+    public ArrayList<Person> requestWorkers(ArrayList<String> requirements, Job job) {
+        return ((Dock) thingObject).requestWorkers(requirements, job);
+    }
+    public void releaseWorkers(ArrayList<Person> workers) {
+        ((Dock) thingObject).releaseWorkers(workers);
+    }
     public String toString(){
         String returns = (this instanceof PassengerShip ? "Passenger " : "Cargo ");
         returns += "Ship: " + super.toString();

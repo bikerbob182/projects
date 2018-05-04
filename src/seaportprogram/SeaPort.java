@@ -6,10 +6,18 @@
  */
 package seaportprogram;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
+import javax.swing.GroupLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
 
 /**
  *
@@ -21,6 +29,10 @@ class SeaPort extends Thing {
     ArrayList<Ship> ships = new ArrayList<Ship>();
     ArrayList<Person> persons = new ArrayList<Person>();
     ArrayList <Job> jobs = new ArrayList <Job>(); 
+    JPanel containerPanel = new JPanel();
+    JLabel resourceLabel = new JLabel("", SwingConstants.LEFT);
+    JLabel requestLabel = new JLabel("", SwingConstants.LEFT);
+    JProgressBar resourceProgress;
     
     public SeaPort (Scanner sc){
         super(sc);
@@ -92,6 +104,106 @@ class SeaPort extends Thing {
         for (Dock dock : docks){
             dock.checkDocksAtDock();
         }
+    }
+    public boolean askForPersonnel(ArrayList<String> requirements) {
+        ArrayList<Person> personnelChecker = new ArrayList<Person>();
+        for (String requirement : requirements) {
+            for (Person person : persons) {
+                if (person.hasSkill(requirement) && !personnelChecker.contains(person))
+                    personnelChecker.add(person);
+                    if (personnelChecker.size() == requirements.size())
+                        return true;
+                }
+        }
+        return false;
+    }
+    public ArrayList<Person> requestWorkers(ArrayList<String> requirements, Job job) {
+        ArrayList<Person> requiredWorkers = new ArrayList<Person>();
+        for (String requirement : requirements) {
+            for (Person person : persons) {
+                if (person.hasSkill(requirement)) synchronized (this) {
+                    requiredWorkers.add(person.hire());
+                }
+                if (requiredWorkers.size() == requirements.size()) {
+                    broadcastUpdateOnResourcePool();
+                    if (jobs.contains(job)) jobs.remove(job);
+                        return requiredWorkers;
+                }
+            }
+        }
+        if (!jobs.contains(job)) {
+            jobs.add(job);
+        }
+        if (requiredWorkers.size() > 0)
+            releaseWorkers(requiredWorkers);
+            return null;
+    }
+    public void releaseWorkers(ArrayList<Person> workers) {
+        for (Person worker : workers) {
+            if (worker != null) 
+                synchronized (this) {
+                    worker.release();
+                }
+        }
+        broadcastUpdateOnResourcePool();
+    }
+    private void broadcastUpdateOnResourcePool() {
+        int availableResources = getAvailableResources();
+        resourceLabel.setText("Resources: " + availableResources);
+        requestLabel.setText("Requests: " + jobs.size());
+        if (resourceProgress != null) {
+            resourceProgress.setValue(availableResources);
+            if (availableResources < Math.round(persons.size() * 0.2)) {
+                resourceProgress.setForeground(Color.red);
+            } else if (availableResources < Math.round(persons.size() * 0.6)) {
+                resourceProgress.setForeground(Color.yellow);
+            } else {
+                resourceProgress.setForeground(Color.blue);
+            }
+        }
+    }
+    private int getAvailableResources() {
+        int numOfAvailablePerson = 0;
+        for (Person person : persons) {
+            if (person.isAvailable)
+                numOfAvailablePerson++;
+        }
+        return numOfAvailablePerson;
+    }
+     private void setVisualElements() {
+        containerPanel = new JPanel();
+        requestLabel.setMaximumSize(new Dimension(100, 20));
+        requestLabel.setMaximumSize(new Dimension(100, 20));
+        resourceLabel.setMinimumSize(new Dimension(100, 20));
+        resourceLabel.setMinimumSize(new Dimension(100, 20));
+        GroupLayout groupLayout = new GroupLayout(containerPanel);
+        containerPanel.setLayout(groupLayout);
+        setLayout(groupLayout);
+    }
+    private void setLayout(GroupLayout groupLayout) {
+        groupLayout.setAutoCreateGaps(true);
+        groupLayout.setAutoCreateContainerGaps(true);
+        JLabel portLabel = new JLabel("Port: " + getName(), SwingConstants.LEFT);
+        portLabel.setMaximumSize(new Dimension(120, 20));
+        portLabel.setMinimumSize(new Dimension(120, 20));
+        resourceProgress = new JProgressBar(0, persons.size());
+        broadcastUpdateOnResourcePool();
+        groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
+        .addComponent(portLabel)
+        .addComponent(resourceProgress)
+        .addComponent(resourceLabel)
+        .addComponent(requestLabel)
+        );
+        groupLayout.setVerticalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        .addComponent(portLabel)
+        .addComponent(resourceProgress)
+        .addComponent(resourceLabel)
+        .addComponent(requestLabel)
+        );
+    }
+    public Component getPanel() {
+        setVisualElements();
+        return containerPanel;
     }
     public String toString () {
         String st = "\n\nSeaPort: " + super.toString();

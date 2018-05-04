@@ -41,6 +41,7 @@ public class SeaPortProgram {
             scan = new Scanner(new File(chooseFile()));
             world.process(scan);
             scan = null;
+            System.gc();
             BuildGUI buildGUI = new BuildGUI();
        } catch (FileNotFoundException e){
             e.printStackTrace();
@@ -65,8 +66,10 @@ public class SeaPortProgram {
         public BuildGUI(){
             
             JFrame frame = new JFrame("Sea Port Progam");
-            frame.setSize(new Dimension(800, 600));
+            frame.setSize(new Dimension(900, 600));
             JPanel leftPanel = new JPanel();
+            leftPanel.setLayout(new BorderLayout());
+            leftPanel.setSize(new Dimension(500,600));
            
             //build scrollpane           
             JTextArea textArea = new JTextArea();
@@ -85,16 +88,26 @@ public class SeaPortProgram {
             JTextField searchInput = new JTextField();
             searchInput.setPreferredSize(new Dimension(100,30));
             JPanel containerForJobs = new JPanel();
+            JPanel containerForResources = new JPanel();
             containerForJobs.setLayout(new BoxLayout(containerForJobs, BoxLayout.Y_AXIS));
-            for (SeaPort seaPort : world.portsMap.values()){
-            for(Ship ship : seaPort.ships){
-            for (Job job : ship.ships){
-                containerForJobs.add(job.getPanel());
-            }
-            }
+            containerForResources.setLayout(new BoxLayout(containerForResources, BoxLayout.Y_AXIS));
+            boolean hasJob = false;
+            boolean hasResource = false;
+            for (SeaPort seaPort : world.portsMap.values()) {
+                containerForResources.add(seaPort.getPanel());
+                if (!hasResource)
+                    hasResource = seaPort.persons.size() > 0;
+                for (Ship ship : seaPort.ships) {
+                    for (Job job : ship.ships) {
+                        containerForJobs.add(job.getPanel());
+                        hasJob = true;
+                    }
+                }
             }
             JScrollPane jobsScrollPane = new JScrollPane(containerForJobs);
+            JScrollPane resourcesScrollPane = new JScrollPane(containerForResources);
             jobsScrollPane.setMaximumSize(new Dimension(5660,800));
+            resourcesScrollPane.setMaximumSize(new Dimension(5660,800));
             //sort.setPreferredSize(new Dimension(50,40));
             gbc.anchor = GridBagConstraints.CENTER;
             gbc.gridx = 0;
@@ -141,7 +154,7 @@ public class SeaPortProgram {
             //add panels to JFrame
             leftPanel.add(searchPanel, BorderLayout.PAGE_START);
             leftPanel.add(scrollPane, BorderLayout.CENTER);
-            leftPanel.add(buttonPanel2, BorderLayout.PAGE_END);
+            leftPanel.add(resourcesScrollPane, BorderLayout.PAGE_END);
             leftPanel.add(spaceLeft, BorderLayout.LINE_START);
             leftPanel.add(spaceRight, BorderLayout.LINE_END);
             
@@ -153,6 +166,7 @@ public class SeaPortProgram {
             frame.setLocationRelativeTo(null);
             // make it visible to the user
             frame.setVisible(true);
+            World.setValue();
             
             //construct button actions
             searchButton.addActionListener(new ActionListener() {

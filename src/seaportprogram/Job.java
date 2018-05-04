@@ -40,14 +40,12 @@ public class Job extends Thing implements Runnable {
     public Job(Scanner sc) {
         super(sc);
         duration = (long) sc.nextDouble();
-        //while (sc.hasNext()) {
-            //String requirement = sc.next();
-            //if (requirement != null && requirement.length() > 0)
-              //  requirements.add(requirement);
-        //}
-        System.out.println(this.toString());
+        while (sc.hasNext()) {
+            String requirement = sc.next();
+            if (requirement != null && requirement.length() > 0)
+                requirements.add(requirement);
+        }
     }
-
     public void setThingObject(HashMap thinkObject) {
         if (thinkObject.get(getParent()) != null) {
             this.thingObject = (Thing) thinkObject.get(getParent());
@@ -57,7 +55,6 @@ public class Job extends Thing implements Runnable {
             new Thread(this).start();
         }
     }
-
     private void setElements() {
         panel = new JPanel();
         bar = new JProgressBar();
@@ -69,10 +66,7 @@ public class Job extends Thing implements Runnable {
         setLayout(groupLayout);
         setActionListeners();
     }
-
     private void setLayout(GroupLayout groupLayout) {
-        
-
         groupLayout.setAutoCreateGaps(true);
         groupLayout.setAutoCreateContainerGaps(true);
         JLabel jLabel = new JLabel(parentShip.getName(), SwingConstants.CENTER);
@@ -89,11 +83,9 @@ public class Job extends Thing implements Runnable {
         .addComponent(stop)
         .addComponent(cancel));
     }
-
     public JPanel getPanel() {
         return panel;
-    }
-        
+    }       
     private void setActionListeners() {
         stop.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -139,23 +131,36 @@ public class Job extends Thing implements Runnable {
         while (!parentShip.processShip()) {
             waitTime(100);
         }
-        long time = System.currentTimeMillis();
-        long startTime = time;
-        long stopTime = time + 1000 * duration;
-        double duration = stopTime - time;
-        while (time < stopTime && noKillFlag) {
-            waitTime(100);
-            if (flag) {
-                showStatus(Status.RUNNING);
-                time += 100;
-                bar.setValue((int) (((time - startTime) / duration) * 100));
+        ArrayList<Person> workers = null;
+            if (requirements.size() == 0 || parentShip.askForPersonnel(requirements)) {
+                if (requirements.size() != 0) {
+                    do {
+                        waitTime(100);
+                        workers = parentShip.requestWorkers(requirements, removedJob);
+                    } while (workers == null || workers.size() != requirements.size());
+                }
+                long time = System.currentTimeMillis();
+                long startTime = time;
+                long stopTime = time + 1000 * duration;
+                double duration = stopTime - time;
+                while (time < stopTime && noKillFlag) {
+                    waitTime(100);
+                    if (flag) {
+                    showStatus(Status.RUNNING);
+                        time += 100;
+                        bar.setValue((int) (((time - startTime) / duration) * 100));
+                    } else {
+                        showStatus(Status.SUSPENDED);
+                   }
+                }
+                bar.setValue(100);
+                showStatus(Status.DONE);
             } else {
                 showStatus(Status.SUSPENDED);
             }
-        }
-        bar.setValue(100);
-        showStatus(Status.DONE);
-        parentShip.removeShip(removedJob);
+            if (workers != null && workers.size() > 0)
+                parentShip.releaseWorkers(workers);
+                parentShip.removeShip(removedJob);
     }
 
     private void waitTime(long l) {

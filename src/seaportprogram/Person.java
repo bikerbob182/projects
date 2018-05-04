@@ -14,6 +14,7 @@ import java.util.Scanner;
  */
 class Person extends Thing {
     String skill;
+    boolean isAvailable = true;
     public Person(Scanner sc) {
         super(sc);
         if (sc.hasNext())
@@ -21,6 +22,20 @@ class Person extends Thing {
     }
     public String getSkill(){
         return skill;
+    }
+    synchronized public Person hire() {
+        if (isAvailable) {
+            isAvailable = false;
+            return this;
+        }
+        return null;
+    }
+    synchronized public void release() {
+        if (!isAvailable)
+            isAvailable = true;
+    }
+    public boolean hasSkill(String requirement) {
+        return requirement.toLowerCase().matches(skill.toLowerCase());
     }
     public String toString(){
         return "Person: " + super.toString() + " " + skill;

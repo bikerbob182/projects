@@ -6,6 +6,7 @@
  */
 package seaportprogram;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -44,6 +45,15 @@ class Dock extends Thing {
     public void leaveShipFromDock() {
         setShip(null);
         checkDocksAtDock();
+    }
+    boolean askForPersonnel(ArrayList<String> requirements) {
+        return ((SeaPort) thingObject).askForPersonnel(requirements);
+    }
+    public ArrayList<Person> requestWorkers(ArrayList<String> requirements, Job job) {
+        return ((SeaPort) thingObject).requestWorkers(requirements, job);
+    }
+    public void releaseWorkers(ArrayList<Person> workers) {
+        ((SeaPort) thingObject).releaseWorkers(workers);
     }
     
     public String toString(){
